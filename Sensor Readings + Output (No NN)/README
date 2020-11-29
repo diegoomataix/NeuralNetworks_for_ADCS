@@ -1,0 +1,16 @@
+Sketces for reading sensor data from MPU6050 sensor and using it to output a change in voltage to drive the DC motor
+
+/*
+===Hardware===
+- Arduino Uno R3
+- MPU-6050 /GY-521
+- DC MOTOR
+- L293D
+
+===Software===
+- Arduino IDE v1.8.42
+- Arduino Wire library
+- I2Cdev.h --> https://github.com/jrowberg/i2cdevlib
+- MPU6050.h -->  https://github.com/jrowberg/i2cdevlib
+ */
+  
