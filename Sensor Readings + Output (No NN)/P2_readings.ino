@@ -1,3 +1,10 @@
+/*
+Comments: (Diego @ 04.12 11.30pm)
+      - Accelerometer x,y,z working --> provides readings in 'g's
+      - Angle readings use both accelerometer and gyroscope as a Low-Pass Filter and High-Pass Filter respectively
+            - Does not seem to provide accurate readings. Why?
+*/
+
 ////////////////////////////////////////////// Libraries
 #include "Wire.h"
 #include "I2Cdev.h"
