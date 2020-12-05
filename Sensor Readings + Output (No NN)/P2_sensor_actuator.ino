@@ -93,9 +93,9 @@ void setup() {
 void loop() {
   setupMPU();
   mpu.getMotion6(&accX, &accY, &accZ, &gyroX, &gyroY, &gyroZ); ////  Assign MPU6050 readings to the respective int16_t
-  directionControl();
   recordAccelGryoRegisters();
   complementaryFilter();
+  directionControl();
   printData();
 }
 
@@ -132,7 +132,7 @@ angles (left half-plane, y < 0). */
   gyroAngleZ = (float)gyroRateZ*sampleTime;
   
   // Calculate Acceleration
-  gForceX = accX / 16388.0;  // 16388 is the value that the accel would show under 1g
+  gForceX = accX / 16388.0;  // 16388 is the value that the accel would show when subject to 1g acceleration
   gForceY = accY / 16388.0; 
   gForceZ = accZ / 16388.0;
   
@@ -158,92 +158,80 @@ horizontal acceleration to pass through. */
 
 /* -------------------------- directionControl -------------------------- */
 void directionControl() {
-  
-/* ORIGINAL CODE FOR CONTROL
-  //  // Serial.println(ax);
-//  if(ax > 0){
-//  if(ax < 255){
-//  Serial.println(ax);
-//  analogWrite(in2,ax);
-//  }
-//  else{
-//  Serial.println("+255");
-//  analogWrite(in2,255);
-//  }
-//  
-//  }
-//  if(ax < 0){
-//  if(ax > -255){
-//  Serial.println(ax);
-//  analogWrite(in1, ax-ax-ax);
-//  }
-//  else{
-//  Serial.println("-255");
-//  analogWrite(in1, 255);
-//  }
-//  } */
+  // Set motors to maximum speed
+  // For PWM maximum possible values are 0 to 255
+    analogWrite(enA, 255);
+    analogWrite(enB, 255);
 
-    /* ---------- Control y-direction ----------*/
-    if(currentAngleX > 0){
-    if(currentAngleX < 255){
-    //Serial.println(accX);
-    //analogWrite(in2,accX);
-    analogWrite(in1, HIGH);
-    analogWrite(in2, LOW);
-    //delay(2000);
+    /* ---------- Control X-direction ----------*/
+    if(accX > 0){
+    if(accX < 255){
+      //Serial.println(accX);
+      analogWrite(in2,accX);
+      analogWrite(enA, 255);
+      digitalWrite(in1, HIGH);
+      digitalWrite(in2, LOW);
+      //delay(2000);
     }
     else{
-    //Serial.println("+255");
-    //analogWrite(in2,255);
-    analogWrite(in1, LOW);
-    analogWrite(in2, LOW);
+      //Serial.println("+255");
+      analogWrite(in2,255);
+      //analogWrite(enA, 0);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, LOW);
     }
     
     }
-    if(currentAngleX < 0){
-    if(currentAngleX > -255){
-    //Serial.println(accX);
-    //analogWrite(in1, accX-accX-accX);
-    analogWrite(in1, LOW);
-    analogWrite(in2, HIGH);
+    if(accX < 0){
+    if(accX > -255){
+      //Serial.println(accX);
+      analogWrite(in1, accX-accX-accX);
+      analogWrite(enA, 255);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, HIGH);
     }
     else{
-    //Serial.println("-255");
-    //analogWrite(in1, 255);
-    analogWrite(in1, LOW);
-    analogWrite(in2, LOW);
+      //analogWrite(enA, 0);
+      //Serial.println("-255");
+      //analogWrite(in1, 255);
+      digitalWrite(in1, LOW);
+      digitalWrite(in2, LOW);
     }
     } 
 
-    /* ---------- Control y-direction ----------*/
-    if(currentAngleY > 0){
-    if(currentAngleY < 255){
-    //Serial.println(accY);
-    //analogWrite(in2,accY);
-    analogWrite(in1, HIGH);
-    analogWrite(in2, LOW);
-    //delay(2000);
-    }
+    /* ---------- Control Y-direction ----------*/
+    if(accY > 0){
+    if(accY < 255){
+      //analogWrite(enB, 255);
+      //Serial.println(accY);
+      analogWrite(in4,accY);
+      digitalWrite(in3, HIGH);
+      digitalWrite(in4, LOW);
+      //delay(2000);
+      }
     else{
-    //Serial.println("+255");
-    //analogWrite(in2,255);
-    analogWrite(in1, LOW);
-    analogWrite(in2, LOW);
+      //analogWrite(enB, 0);  
+      //Serial.println("+255");
+      analogWrite(in4,255);
+      digitalWrite(in3, LOW);
+      digitalWrite(in4, LOW);
     }
     
     }
-    if(currentAngleY < 0){
-    if(currentAngleY > -255){
-    //Serial.println(accY);
-    //analogWrite(in1, accY-accY-accY);
-    analogWrite(in1, LOW);
-    analogWrite(in2, HIGH);
+    if(accY < 0){
+    if(accY > -255){
+      //analogWrite(enB, 255);
+      //Serial.println(accY);
+      analogWrite(in3, accY-accY-accY);
+      digitalWrite(in3, LOW);
+      digitalWrite(in4, HIGH);
     }
     else{
-    //Serial.println("-255");
-    //analogWrite(in1, 255);
-    analogWrite(in1, LOW);
-    analogWrite(in2, LOW);
+      //analogWrite(enB, 255);
+      //Serial.println("-255");
+      analogWrite(in3, 255);
+      digitalWrite(in3, LOW);
+      digitalWrite(in4, LOW);
     }
     } 
     
@@ -253,6 +241,16 @@ void directionControl() {
 /* -------------------------- printData -------------------------- */
 void printData() {        /* PRINT DATA */
 
+
+  Serial.print(" acc (RAW): ");
+  Serial.print (" X = ");
+  Serial.print( accX);
+  Serial.print (" Y = ");
+  Serial.print( accY);
+  Serial.print (" Z = ");
+  Serial.print( accZ);
+
+  Serial.println (" ");
   Serial.print(" Angle, accel (deg): ");
   Serial.print (" X = ");
   Serial.print( accAngleX);
